@@ -5,6 +5,8 @@ Created on Sun Mar 29 10:38:06 2020
 @author: elisa
 """
 
+#  TEST COMMENT 
+
 ## Let's see if we can get some data
 # https://realpython.com/python-json/
 # https://stackoverflow.com/questions/19483351/converting-json-string-to-dictionary-not-list
