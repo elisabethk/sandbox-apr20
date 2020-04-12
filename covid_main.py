@@ -5,7 +5,7 @@ Created on Sun Apr 12 14:48:19 2020
 @author: elisa
 """
 
-import covid_02 as cvd
+import covid_fn as cvd
 
 ################################################################
 # Examples using functions in covid_02
