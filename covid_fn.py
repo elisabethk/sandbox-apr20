@@ -78,7 +78,7 @@ def get_pop_data():
 # O: Dataframe (long)
 #################################################################
 
-def load_country(country):
+def load_country_region(country):
     response = requests.get("https://api.covid19api.com/country/" + country + "/status/confirmed")
 
     # convert to a dataframe
@@ -87,7 +87,9 @@ def load_country(country):
     
     df['Date'] = pd.to_datetime(df['Date']).dt.date
 
-    df = df.drop(['Lat','Lon','CountryCode','Status'], axis = 1)
+    df = df.drop(['Lat','Lon', 'City', 'CityCode', 'CountryCode','Status'], axis = 1)
+    
+    df = df.pivot_table(values = 'Cases', columns = 'Province', index = 'Date', aggfunc = np.sum).reset_index()   
 
     return df
 
@@ -98,8 +100,8 @@ def load_country(country):
 # O: Dataframe (wide - columns are country names)
 #################################################################
 
-def load_country_basic(country):
-    response = requests.get("https://api.covid19api.com/country/" + country + "/status/confirmed")
+def load_country_basic(country, status = 'confirmed'):
+    response = requests.get("https://api.covid19api.com/country/" + country + "/status/" + status)
 
     # convert to a dataframe
     
@@ -107,16 +109,17 @@ def load_country_basic(country):
     
     df['Date'] = pd.to_datetime(df['Date']).dt.date
     
+    # Flatten province level data if applicable
     df = df.pivot_table(values = 'Cases', index = ['Country', 'Date'], aggfunc = np.sum).reset_index()
    
     return df
 
-def load_countries_basic(countries):
+def load_countries_basic(countries, status = 'confirmed'):
     
     df = pd.DataFrame()
     
     for country in countries:
-        new_country = load_country_basic(country)
+        new_country = load_country_basic(country, status)
         df = df.append(new_country)
         
     df = pd.pivot_table(df, values = 'Cases', index = 'Date', columns = 'Country', aggfunc = np.sum).reset_index()
