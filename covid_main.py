@@ -20,58 +20,61 @@ my_countries = ['sweden', 'australia', 'switzerland', 'united-states', 'france',
 df = cvd.load_countries_basic(my_countries)
 
 # Plot cumulative cases for given countries
-cvd.plot_cum_cases(df)
+cvd.plot_cases(df)
 
 # As above, but since the day of the 100th case for each country
 since100 = cvd.from100cases(df)
-cvd.plot_cum_cases(since100, logplot = True) 
+cvd.plot_cases(since100, logplot = True) 
 
 # Normalise number of cases by country population and plot
 dfn = cvd.normalise_pop(df)
-cvd.plot_cum_cases(dfn)
+cvd.plot_cases(dfn)
 
 # Track deaths instead of total cases
 df = cvd.load_country_basic('australia', status = 'deaths')
 df = cvd.load_countries_basic(['australia', 'italy'], status = 'deaths')
-cvd.plot_cum_cases(df)
+cvd.plot_cases(df)
 
 #################################################################
 # Doodles 
 #################################################################
-
 
 # Some data comes with province (state) level data, others don't
 
 aus = cvd.load_country_region('australia')
 us = cvd.load_country_region('united-states')
 
-cvd.plot_cum_cases(aus)
+cvd.plot_cases(aus)
+
+aus_states = cvd.top_by_state(aus)
+cvd.plot_cases(aus_states, logplot = False)
+cvd.plot_newcases(aus_states)
+
+us_states = cvd.top_by_state(us, top_n = 5)
+cvd.plot_cases(us_states, logplot = False)
+
+# plot new cases daily
+
+aus_new = cvd.get_newcases(aus)
+cvd.plot_cases(aus_new, logplot = False)
 
 
-# Pick out the largest cases amongst US states
-us.columns
-#us = us[['New York', 'New Jersey', 'Texas', 'Illinois', 'Florida']]
-cvd.plot_cum_cases(us, logplot = True)
-
-us_latest = pd.DataFrame.transpose(us.tail(1)).drop('Date')
-us_latest.columns = ['Cases']
-us_top = pd.Series(us_latest.sort_values(by = 'Cases', ascending = False)[0:10].index)
-
-us_filtered = us[pd.concat([pd.Series(['Date']),us_top])]
-
-cvd.plot_cum_cases(us_filtered, logplot = False)
-
-cvd.plot_newcases(aus)
-
-# do state things 
 
 # to get US population by state
 # https://www.census.gov/data/developers/data-sets/popest-popproj/popest.html
 
-# Plot new cases against days
+
+
+
 # Deaths by state/province/region 
 
 # Basic modelling... 
+
+
+
+
+
+
 
 
 

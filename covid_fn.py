@@ -171,7 +171,7 @@ def from100cases(df):
 # O: Null
 #################################################################
 
-def plot_cum_cases(df, logplot = False):
+def plot_cases(df, logplot = False):
     df.plot(logy = logplot)
     
 
@@ -211,6 +211,23 @@ def normalise_pop(df):
     
     return dfn
 
+################################################################
+# Returns dataframe of new cases per day
+# I: Dataframe (Date col, wide format - countries on columns)
+# O: Same as input, cells are new cases instead of cumulative cases
+#################################################################
+
+def get_newcases(df):
+    dfnew = pd.DataFrame()
+    dfnew['Date'] = df['Date']
+    
+    country_list = df.columns.drop(['Date'])
+    
+    for country in country_list:
+        dfnew[country] = df[country].diff()
+
+    return dfnew
+    
 ################################################################
 # Plots new cases against total cases
 # I: Dataframe (Date col, wide format - countries on columns)
@@ -260,6 +277,23 @@ def plot_newcases(df):
     
     return dfnew
     
+################################################################
+# Pick out states with the top n highest number of cases
+# I: DF: Country data (Date col, wide format - regions on columns)
+# O: Input dataframe with columns of regions with highest cases only
+#################################################################
 
-
+def top_by_state(country, top_n = 3):
+    # Drop the latest day since sometimes it's not fully updated
+    country = country.drop(country.tail(1).index)
+    
+    # Pick out the last day's data for each state
+    latest_day = pd.DataFrame.transpose(country.tail(1)).drop('Date')
+    latest_day.columns = ['Cases']
+    
+    # sort by number of cases
+    top_states = pd.Series(latest_day.sort_values(by = 'Cases', ascending = False)[0:top_n].index)
+    top_states_data = country[pd.concat([pd.Series(['Date']),top_states])]
+    
+    return top_states_data
 
